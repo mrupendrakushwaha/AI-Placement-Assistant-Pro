@@ -15,7 +15,6 @@ genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash-lite")
 
 uploaded_file = st.file_uploader("Upload Resume PDF", type=["pdf"])
-candidate_name = st.text_input("Candidate Name")
 github_username = st.text_input("GitHub Username")
 
 if uploaded_file and st.button("Analyze Resume"):
