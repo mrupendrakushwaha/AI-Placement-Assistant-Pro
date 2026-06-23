@@ -4,7 +4,8 @@ import requests
 import google.generativeai as genai
 import re
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import pt
 
 st.set_page_config(page_title="AI Placement Assistant Pro", page_icon="🎯", layout="wide")
 
@@ -71,6 +72,7 @@ IMPORTANT:
 - Add blank line after every section
 - Professional PDF format
 - Do not use ** symbols.
+- Format headings like: [HEADING] ATS Score
 """
 
     with st.spinner("Analyzing..."):
@@ -90,28 +92,54 @@ IMPORTANT:
     pdf_file = "AI_Placement_Report.pdf"
     pdf = SimpleDocTemplate(pdf_file)
     styles = getSampleStyleSheet()
+    
+    # Custom styles banayein
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=14,
+        textColor='#0066CC',  # Blue color
+        spaceAfter=6,
+        spaceBefore=12,
+        fontName='Helvetica-Bold'
+    )
+    
     story = []
 
     story.append(
         Paragraph(
-            "AI Placement Assistant Pro",
+            "<b>AI Placement Assistant Pro</b>",
             styles["Title"]
         )
     )
     story.append(Spacer(1, 10))
     story.append(
         Paragraph(
-            "Professional Placement Analysis Report",
+            "<b>Professional Placement Analysis Report</b>",
             styles["Heading2"]
         )
     )
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 15))
 
     for line in report.split("\n"):
         line = line.strip()
 
         if not line:
+            story.append(Spacer(1, 8))
             continue
+
+        # Headings detect karo - headings mein typically "Score", "Skills", "Readiness", etc ho
+        is_heading = (
+            "Score" in line or 
+            "Strengths" in line or 
+            "Skills" in line or 
+            "Package" in line or 
+            "Readiness" in line or 
+            "Questions" in line or 
+            "Roadmap" in line or
+            "Reasoning" in line or
+            line.isupper()
+        )
 
         # Bullet points
         if line.startswith("•"):
@@ -119,6 +147,15 @@ IMPORTANT:
                 Paragraph(
                     line,
                     styles["BodyText"]
+                )
+            )
+
+        # Headings ko bold aur blue banao
+        elif is_heading:
+            story.append(
+                Paragraph(
+                    f"<b><font color='#0066CC'>{line}</font></b>",
+                    heading_style
                 )
             )
 
