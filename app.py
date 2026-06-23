@@ -5,7 +5,6 @@ import re
 from groq import Groq
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import pt
 
 st.set_page_config(page_title="AI Placement Assistant Pro", page_icon="🎯", layout="wide")
 
