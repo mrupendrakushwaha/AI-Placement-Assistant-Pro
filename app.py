@@ -1,8 +1,8 @@
 import streamlit as st
 import pdfplumber
 import requests
-import google.generativeai as genai
 import re
+from groq import Groq
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import pt
@@ -15,8 +15,8 @@ st.markdown(
 )
 st.write("Upload Resume PDF and get a professional placement report.")
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.5-flash-lite")
+# Initialize Groq client
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 uploaded_file = st.file_uploader("Upload Resume PDF", type=["pdf"])
 github_username = st.text_input("GitHub Username")
@@ -72,18 +72,30 @@ IMPORTANT:
 - Add blank line after every section
 - Professional PDF format
 - Do not use ** symbols.
-- Format headings like: [HEADING] ATS Score
+- Format headings like: ATS Score (without brackets)
 """
 
     with st.spinner("Analyzing..."):
-        report = model.generate_content(prompt).text
-        report = report.replace("* ", "\n• ")
-        
-        # Remove bold markdown formatting
-        report = re.sub(r"\*\*(.*?)\*\*", r"\1", report)
-        
-        # Remove extra stars
-        report = report.replace("*", "")
+        try:
+            chat_completion = client.chat.completions.create(
+                model="mixtral-8x7b-32768",
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=2048
+            )
+            report = chat_completion.choices[0].message.content
+            report = report.replace("* ", "\n• ")
+            
+            # Remove bold markdown formatting
+            report = re.sub(r"\*\*(.*?)\*\*", r"\1", report)
+            
+            # Remove extra stars
+            report = report.replace("*", "")
+        except Exception as e:
+            st.error(f"❌ Error generating report: {str(e)}")
+            st.stop()
 
     st.subheader("📊 Professional Placement Report")
     st.markdown(report)
