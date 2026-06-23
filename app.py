@@ -2,6 +2,7 @@ import streamlit as st
 import pdfplumber
 import requests
 import google.generativeai as genai
+import re
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
@@ -78,16 +79,12 @@ IMPORTANT:
     with st.spinner("Analyzing..."):
         report = model.generate_content(prompt).text
         report = report.replace("* ", "\n• ")
-    import re
-
-report = response.text
-
-# sab bold stars hata do
-report = re.sub(r"\*\*(.*?)\*\*", r"\1", report)
-
-# extra stars hata do
-report = report.replace("*", "")
         
+        # Remove bold markdown formatting
+        report = re.sub(r"\*\*(.*?)\*\*", r"\1", report)
+        
+        # Remove extra stars
+        report = report.replace("*", "")
 
     st.subheader("📊 Professional Placement Report")
     st.markdown(report)
@@ -119,19 +116,8 @@ report = report.replace("*", "")
         if not line:
             continue
 
-        # Bold Headings
-        if "**" in line:
-            title = line.replace("**", "")
-            story.append(
-                Paragraph(
-                    f"<b>{title}</b>",
-                    styles["Heading2"]
-                )
-            )
-            story.append(Spacer(1, 5))
-
         # Bullet points
-        elif line.startswith("•"):
+        if line.startswith("•"):
             story.append(
                 Paragraph(
                     line,
