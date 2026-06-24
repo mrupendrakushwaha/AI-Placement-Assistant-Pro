@@ -225,15 +225,12 @@ Top 5 Strengths, Top 5 Missing Skills,
 Expected Package, Interview Readiness,
 Top 10 HR Questions, Top 10 AI/ML Questions,
 Detailed 3 Month Roadmap
-
+Minimum 5 point all month
 Month 1:
-• Minimum 5 points
 
 Month 2:
-• Minimum 5 points
 
 Month 3:
-• Minimum 5 points
 IMPORTANT:
 
 Do not use markdown.
