@@ -224,7 +224,16 @@ ATS Score, GitHub Score, Placement Readiness,
 Top 5 Strengths, Top 5 Missing Skills,
 Expected Package, Interview Readiness,
 Top 10 HR Questions, Top 10 AI/ML Questions,
-3 Month Roadmap.
+Detailed 3 Month Roadmap
+
+Month 1:
+• Minimum 5 points
+
+Month 2:
+• Minimum 5 points
+
+Month 3:
+• Minimum 5 points
 IMPORTANT:
 
 Do not use markdown.
@@ -273,7 +282,7 @@ Top 5 Missing Skills
         st.stop()
 
     st.subheader("📊 Professional Placement Report")
-    st.markdown(report)
+    st.markdown(report.replace("•", "\n•"))
 
     pdf_file = "AI_Placement_Report.pdf"
 
